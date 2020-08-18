@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { sort } from '../../store/actions';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 import List from '../list/List';
 import ActionButton from '../list/ActionButton';
@@ -14,7 +14,7 @@ const ListContainer = styled.div`
 
 const Home = ({ lists, sort }) => {
   const onDragEnd = (result) => {
-    const { destination, source, draggableId } = result;
+    const { destination, source, draggableId, type } = result;
     if (!destination) return;
     const properties = {
       droppableIdStart: source.droppableId,
@@ -22,18 +22,24 @@ const Home = ({ lists, sort }) => {
       droppableIndexStart: source.index,
       droppableIndexEnd: destination.index,
       draggableId,
+      type,
     };
     sort(properties);
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <ListContainer>
-        {lists.map((list) => (
-          <List listId={list.id} key={list.id} list={list} />
-        ))}
-        <ActionButton list />
-      </ListContainer>
+      <Droppable droppableId='all-lists' direction='horizontal' type='list'>
+        {(provided) => (
+          <ListContainer {...provided.droppableProps} ref={provided.innerRef}>
+            {lists.map((list, index) => (
+              <List listId={list.id} key={list.id} list={list} index={index} />
+            ))}
+            {provided.placeholder}
+            <ActionButton list />
+          </ListContainer>
+        )}
+      </Droppable>
     </DragDropContext>
   );
 };

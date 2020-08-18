@@ -1,5 +1,5 @@
 import React from 'react';
-import { Droppable } from 'react-beautiful-dnd';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 import Item from './Item';
 import ActionButton from './ActionButton';
@@ -18,20 +18,30 @@ const ListTitle = styled.h2`
   font-size: 16px;
 `;
 
-const List = ({ list, listId }) => {
+const List = ({ list, listId, index }) => {
   return (
-    <Droppable droppableId={listId}>
+    <Draggable draggableId={listId} index={index}>
       {(provided) => (
-        <ListContainer {...provided.droppableProps} ref={provided.innerRef}>
-          <ListTitle>{list.title}</ListTitle>
-          {list.cards.map((card, index) => (
-            <Item card={card} key={card.id} id={card.id} index={index} />
-          ))}
-          {provided.placeholder}
-          <ActionButton listId={listId} />
+        <ListContainer
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+          {...provided.dragHandleProps}
+        >
+          <Droppable droppableId={listId}>
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                <ListTitle>{list.title}</ListTitle>
+                {list.cards.map((card, index) => (
+                  <Item card={card} key={card.id} id={card.id} index={index} />
+                ))}
+                {provided.placeholder}
+                <ActionButton listId={listId} />
+              </div>
+            )}
+          </Droppable>
         </ListContainer>
       )}
-    </Droppable>
+    </Draggable>
   );
 };
 

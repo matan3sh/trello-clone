@@ -5,7 +5,7 @@ const COLLECTION = 'lists';
 
 export const addList = (title) => async (dispatch) => {
   try {
-    const list = { title, id: service.makeId, cards: [] };
+    const list = { title, id: service.makeId(), cards: [] };
     dispatch({ type: 'ADD_LIST', payload: list });
   } catch (err) {
     console.log(err);
@@ -14,7 +14,7 @@ export const addList = (title) => async (dispatch) => {
 
 export const addItem = (text, listId) => async (dispatch) => {
   try {
-    const item = { text, id: service.makeId };
+    const item = { text, id: service.makeId() };
     dispatch({ type: 'ADD_ITEM', payload: { listId, item } });
   } catch (err) {
     console.log(err);
