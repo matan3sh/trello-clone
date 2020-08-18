@@ -1,11 +1,21 @@
-import axios from 'axios';
+import storageService from './storageService';
+import dbService from './dbService';
 
-const PATH = 'list/';
+const KEY = 'lists';
+var gLists = null;
+_createLists();
+
+function _createLists() {
+  gLists = storageService.load(KEY);
+  if (gLists === null) {
+    gLists = dbService.getDefaultData();
+    storageService.store(KEY, gLists);
+  }
+}
 
 const query = async () => {
   try {
-    const res = await axios.get(PATH);
-    return res.data.list;
+    return Promise.resolve(gLists);
   } catch (err) {
     console.log(err);
   }

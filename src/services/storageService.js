@@ -1,12 +1,14 @@
-export const Storage = {
-  storeToStorage,
-  loadFromStorage,
-};
+function store(key, value) {
+  localStorage[key] = JSON.stringify(value);
+}
 
-function storeToStorage(key, value) {
-  localStorage.setItem(key, JSON.stringify(value) || null);
+function load(key, defaultValue = null) {
+  var value = localStorage[key];
+  if (!value) return defaultValue;
+  else return JSON.parse(value);
 }
-function loadFromStorage(key) {
-  let data = localStorage.getItem(key);
-  return data ? JSON.parse(data) : undefined;
-}
+
+export default {
+  store,
+  load,
+};

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { sort } from '../../store/actions';
+import { sort, loadLists } from '../../store/actions';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 import List from '../list/List';
@@ -12,7 +12,11 @@ const ListContainer = styled.div`
   margin: 8px;
 `;
 
-const Home = ({ lists, sort }) => {
+const Home = ({ lists, sort, loadLists }) => {
+  useEffect(() => {
+    loadLists();
+  }, [loadLists]);
+
   const onDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
     if (!destination) return;
@@ -50,6 +54,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   sort,
+  loadLists,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

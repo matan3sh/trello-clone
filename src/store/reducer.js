@@ -1,38 +1,7 @@
+import storageService from '../services/storageService';
+
 const initialState = {
-  lists: [
-    {
-      title: 'Last Episode',
-      id: '0egtw',
-      cards: [
-        {
-          id: '0dgsdg',
-          text: 'We Created a Static List And Static Card',
-        },
-        {
-          id: '1sdgsdg',
-          text: 'We Used a mix between material UI and Styled Components',
-        },
-      ],
-    },
-    {
-      title: 'This Episode',
-      id: '1dgsg',
-      cards: [
-        {
-          id: '0xcbxcbsdg',
-          text: 'We Will Create Our First Reducer',
-        },
-        {
-          id: '1sdbsdbv',
-          text: 'And Render Many Cards On Our List With Static Data',
-        },
-        {
-          id: '2adfasdg',
-          text: 'We Will Also Make A Changes',
-        },
-      ],
-    },
-  ],
+  lists: [],
 };
 
 export default function reducer(state = initialState, action) {
@@ -43,18 +12,22 @@ export default function reducer(state = initialState, action) {
         lists: action.payload,
       };
     case 'ADD_LIST':
+      const updatedLists = [...state.lists, action.payload];
+      storageService.store('lists', updatedLists);
       return {
         ...state,
-        lists: [...state.lists, action.payload],
+        lists: updatedLists,
       };
     case 'ADD_ITEM':
+      const updatedCardsInLists = state.lists.map((list) =>
+        list.id === action.payload.listId
+          ? { ...list, cards: [...list.cards, action.payload.item] }
+          : list
+      );
+      storageService.store('lists', updatedCardsInLists);
       return {
         ...state,
-        lists: state.lists.map((list) =>
-          list.id === action.payload.listId
-            ? { ...list, cards: [...list.cards, action.payload.item] }
-            : list
-        ),
+        lists: updatedCardsInLists,
       };
     case 'DRAG_RESULT':
       const copyLists = [...state.lists];
@@ -90,6 +63,7 @@ export default function reducer(state = initialState, action) {
         // Put the item in the new list
         listEnd.cards.splice(action.payload.droppableIndexEnd, 0, ...item);
       }
+      storageService.store('lists', copyLists);
       return {
         ...state,
         lists: copyLists,

@@ -1,11 +1,8 @@
-import service from '../services/service';
-import { Storage } from '../services/storageService';
-
-const COLLECTION = 'lists';
+import localService from '../services/localService';
 
 export const addList = (title) => async (dispatch) => {
   try {
-    const list = { title, id: service.makeId(), cards: [] };
+    const list = { title, id: localService.makeId(), cards: [] };
     dispatch({ type: 'ADD_LIST', payload: list });
   } catch (err) {
     console.log(err);
@@ -14,7 +11,7 @@ export const addList = (title) => async (dispatch) => {
 
 export const addItem = (text, listId) => async (dispatch) => {
   try {
-    const item = { text, id: service.makeId() };
+    const item = { text, id: localService.makeId() };
     dispatch({ type: 'ADD_ITEM', payload: { listId, item } });
   } catch (err) {
     console.log(err);
@@ -29,17 +26,10 @@ export const sort = (properties) => async (dispatch) => {
   }
 };
 
-export const loadContacts = (filter = '') => async (dispatch) => {
+export const loadLists = () => async (dispatch) => {
   try {
-    let res = Storage.loadFromStorage(COLLECTION);
-    if (!res) {
-      res = await service.query();
-      Storage.storeToStorage(COLLECTION, res);
-    }
-    const contacts = res.filter((contact) =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    );
-    dispatch({ type: 'SET_CONTACTS', payload: contacts });
+    const res = await localService.query();
+    dispatch({ type: 'SET_LISTS', payload: res });
   } catch (err) {
     console.log(err);
   }
